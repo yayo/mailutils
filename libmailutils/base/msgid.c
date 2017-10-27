@@ -25,6 +25,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <gnutls/gnutls.h>
+#include <gnutls/crypto.h>
 #include <mailutils/cctype.h>
 #include <mailutils/message.h>
 #include <mailutils/header.h>
@@ -126,31 +128,46 @@ mu_rfc2822_references (mu_message_t msg, char **pstr)
   return rc;
 }
 
+const char* fake_hostname(void)
+ {static char s[]="\0-----------.net";
+  char *p=s;
+  if(0==*p)
+   {unsigned long long t;
+    gnutls_rnd(GNUTLS_RND_RANDOM,(void*)&t,8);
+    for(;p<s+12;p++)
+     {*p=t%36;
+      *p=(9>=*p)?('0'+*p):('a'-10+*p);
+      t/=36;
+     }
+   }
+  return(s);
+ }
+
 int
 mu_rfc2822_msg_id (int subpart, char **pval)
 {
   char date[4+2+2+2+2+2+1];
   time_t t = time (NULL);
   struct tm *tm = localtime (&t);
-  char *host;
   char *p;
+  static size_t n=0;
+  n++;
 	  
   mu_strftime (date, sizeof date, "%Y%m%d%H%M%S", tm);
-  mu_get_host_name (&host);
 
   if (subpart)
     {
       struct timeval tv;
       gettimeofday (&tv, NULL);
-      mu_asprintf (&p, "<%s.%lu.%d@%s>",
+      mu_asprintf (&p, "<%s.%lu.%lu.%d@%s>",
 		   date,
 		   (unsigned long) getpid (),
+		   n,
 		   subpart,
-		   host);
+		   fake_hostname());
     }
   else
-    mu_asprintf (&p, "<%s.%lu@%s>", date, (unsigned long) getpid (), host);
-  free (host);
+    mu_asprintf (&p, "<%s.%lu.%lu@%s>", date, (unsigned long) getpid (), n, fake_hostname());
   *pval = p;
   return 0;
 }

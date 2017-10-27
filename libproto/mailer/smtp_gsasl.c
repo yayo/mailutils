@@ -308,9 +308,6 @@ _mu_smtp_gsasl_auth (mu_smtp_t smtp)
       return rc;
     }
   
-  mu_diag_output (MU_DIAG_DEBUG, "selected authentication mechanism %s",
-		  mech);
-  
   gsasl_callback_hook_set (ctx, smtp);
   gsasl_callback_set (ctx, _smtp_callback);
 

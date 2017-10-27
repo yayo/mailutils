@@ -245,6 +245,9 @@ struct mailvar_symbol mailvar_tab[] =
     { { "sendmail", },
       MAILVAR_TYPEMASK (mailvar_type_string),
       N_("URL of the mail transport agent") },
+    { { "sourceip", },
+      MAILVAR_TYPEMASK (mailvar_type_string),
+      N_("pick your IP address for outgoing messages") },
     /* FIXME: Not yet used. */
     { { "sendwait", },
       MAILVAR_TYPEMASK (mailvar_type_boolean) | MAILVAR_HIDDEN, NULL },

@@ -199,6 +199,14 @@ smtp_open (mu_mailer_t mailer, int flags)
       struct mu_sockaddr *sa;
       struct mu_sockaddr_hints hints;
       mu_stream_t transport;
+      union
+       {struct sockaddr_in in;
+#ifdef MAILUTILS_IPV6
+        struct sockaddr_in6 in6;
+#endif
+       } addr;
+      struct mu_sockaddr mu_addr={NULL,NULL,(struct sockaddr*)&addr,0,NULL};
+      mu_property_t property=NULL;
       
       memset (&hints, 0, sizeof (hints));
       hints.flags = MU_AH_DETECT_FAMILY;
@@ -209,7 +217,38 @@ smtp_open (mu_mailer_t mailer, int flags)
       if (rc)
 	return rc;
       
-      rc = mu_tcp_stream_create_from_sa (&transport, sa, NULL, mailer->flags);
+      if(0!=(rc=mu_mailer_get_property(mailer,&property)))
+       return(rc);
+      else
+       {const char *sourceip_str;
+        if(0==mu_property_sget_value(property,"sourceip",&sourceip_str))
+         {switch(sa->addr->sa_family)
+           {case AF_INET:
+             addr.in.sin_family=AF_INET;
+             addr.in.sin_port=0;
+             rc=inet_pton(AF_INET,sourceip_str,&(addr.in.sin_addr));
+             mu_addr.addrlen=sizeof(addr.in);
+             break;
+#ifdef MAILUTILS_IPV6
+            case AF_INET6:
+             addr.in6.sin6_family=AF_INET6;
+             addr.in6.sin6_port=0;
+             rc=inet_pton(AF_INET6,sourceip_str,&(addr.in6.sin6_addr));
+             mu_addr.addrlen=sizeof(addr.in6);
+             break;
+#endif
+            default:
+             return(MU_ERR_FAMILY);
+           }
+          if(1!=rc)
+           {if(0==rc)
+             return(MU_ERR_NONAME);
+            else
+             return(MU_ERR_FAILURE);
+           }
+         }
+       }
+      rc = mu_tcp_stream_create_from_sa (&transport, sa, (mu_addr.addrlen ? &mu_addr : NULL), mailer->flags);
       if (rc)
         {
           mu_sockaddr_free (sa);

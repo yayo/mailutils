@@ -65,6 +65,7 @@ mu_smtp_ehlo (mu_smtp_t smtp)
 	p++;
       else
 	p = host;
+      if(NULL==p||0==p[0]) p=".";
       status = mu_smtp_set_param (smtp, MU_SMTP_PARAM_DOMAIN, p);
       MU_SMTP_CHECK_ERROR (smtp, status);
     }

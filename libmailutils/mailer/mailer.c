@@ -477,6 +477,11 @@ _set_from (mu_address_t *pfrom, mu_message_t msg, mu_address_t from,
 	  break;
 	}
       status = safe_address_create (pfrom, mail_from, "sender");
+      if(MU_ERR_INVALID_EMAIL==status)
+       {char *t=alloca(strlen(mail_from)+1+1+strlen(mailer->url->user)+1+1);
+        sprintf(t,"%s <%s>",mail_from,mailer->url->user);
+        status = safe_address_create (pfrom, t, "sender");
+       }
     }
   
   return status;

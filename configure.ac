@@ -1056,6 +1056,9 @@ if test x"$testpam" = x"yes"; then
 	fi
 fi
 
+AC_CHECK_LIB(gnutls, gnutls_rnd)
+AC_CHECK_LIB(rt, clock_gettime)
+
 AC_CHECK_HEADERS(crypt.h)
 AC_CHECK_DECLS(crypt, , ,[
 #include <unistd.h>

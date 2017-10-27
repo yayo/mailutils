@@ -104,9 +104,6 @@ at_hdr (mu_header_t hdr, const char *content_type, const char *encoding,
       rc = mu_header_set_value (hdr, MU_HEADER_CONTENT_DISPOSITION, val, 1);
       free (val);
     }
-  else
-    rc = mu_header_set_value (hdr, MU_HEADER_CONTENT_DISPOSITION, "attachment",
-			      1);
   if (rc)
     return rc;
   return mu_header_set_value (hdr, MU_HEADER_CONTENT_TRANSFER_ENCODING,
