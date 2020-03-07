@@ -476,6 +476,17 @@ _set_from (mu_address_t *pfrom, mu_message_t msg, mu_address_t from,
 	  break;
 	}
       status = safe_address_create (pfrom, mail_from, "sender");
+      if(MU_ERR_INVALID_EMAIL==status && mailer->url->user)
+       {char *t=(char*)mail_from;
+        for(;0!=*t&&'@'!=*t&&':'!=*t;t++){}
+        *t=0;
+        t=alloca(strlen(mail_from)+1+1+strlen(mailer->url->user)+1+1);
+        sprintf(t,"%s <%s>",mail_from,mailer->url->user);
+        mu_header_t header;
+        status=mu_message_get_header(msg,&header);
+        if(!status) mu_header_set_value(header,MU_HEADER_FROM,t,1);
+        status = safe_address_create (pfrom, t, "sender");
+       }
     }
   
   return status;

@@ -28185,29 +28185,6 @@ fi
 
        if test $mu_cv_lib_gsasl != no; then
          LIBS="$LIBS $mu_cv_lib_gsasl"
-         if test "$cross_compiling" = yes; then :
-  mu_cv_lib_gsasl=no
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-#include <gsasl.h>
-
-int
-main()
-{
-  return gsasl_check_version ("0.2.3") == (char*) 0;
-}
-_ACEOF
-if ac_fn_c_try_run "$LINENO"; then :
-  :
-else
-  mu_cv_lib_gsasl=no
-fi
-rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
-  conftest.$ac_objext conftest.beam conftest.$ac_ext
-fi
-
        fi
        LIBS=$save_LIBS
      fi
@@ -28382,29 +28359,6 @@ fi
        LIBS=$saved_LIBS
        if test $mu_cv_lib_gnutls != no; then
          LIBS="$LIBS $TLS_LIBS"
-         if test "$cross_compiling" = yes; then :
-  mu_cv_lib_gnutls=no
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-#include <gnutls/gnutls.h>
-
-int
-main()
-{
-  return gnutls_check_version ("1.2.1") == (char*) 0;
-}
-_ACEOF
-if ac_fn_c_try_run "$LINENO"; then :
-  :
-else
-  mu_cv_lib_gnutls=no
-fi
-rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
-  conftest.$ac_objext conftest.beam conftest.$ac_ext
-fi
-
          LIBS=$saved_LIBS
        fi
      fi
@@ -32057,6 +32011,97 @@ $as_echo "#define USE_LIBPAM 1" >>confdefs.h
 		status_pam=yes
 	fi
 fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gnutls_rnd in -lgnutls" >&5
+$as_echo_n "checking for gnutls_rnd in -lgnutls... " >&6; }
+if ${ac_cv_lib_gnutls_gnutls_rnd+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lgnutls  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char gnutls_rnd ();
+int
+main ()
+{
+return gnutls_rnd ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_gnutls_gnutls_rnd=yes
+else
+  ac_cv_lib_gnutls_gnutls_rnd=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_gnutls_gnutls_rnd" >&5
+$as_echo "$ac_cv_lib_gnutls_gnutls_rnd" >&6; }
+if test "x$ac_cv_lib_gnutls_gnutls_rnd" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBGNUTLS 1
+_ACEOF
+
+  LIBS="-lgnutls $LIBS"
+
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for clock_gettime in -lrt" >&5
+$as_echo_n "checking for clock_gettime in -lrt... " >&6; }
+if ${ac_cv_lib_rt_clock_gettime+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lrt  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char clock_gettime ();
+int
+main ()
+{
+return clock_gettime ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_rt_clock_gettime=yes
+else
+  ac_cv_lib_rt_clock_gettime=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_rt_clock_gettime" >&5
+$as_echo "$ac_cv_lib_rt_clock_gettime" >&6; }
+if test "x$ac_cv_lib_rt_clock_gettime" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBRT 1
+_ACEOF
+
+  LIBS="-lrt $LIBS"
+
+fi
+
 
 for ac_header in crypt.h
 do :

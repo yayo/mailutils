@@ -312,7 +312,7 @@ _mu_url_ctx_parse_cred (struct mu_url_ctx *ctx)
 	 or
 	 <user>:<password>;AUTH=<auth>
       */
-      rc = getkn (ctx, ":;@");
+      rc = getkn (ctx, ":;");
       if (rc)
 	return rc;
 

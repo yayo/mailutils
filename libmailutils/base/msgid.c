@@ -131,25 +131,11 @@ mu_rfc2822_msg_id (int subpart, char **pval)
   char date[4+2+2+2+2+2+1];
   time_t t = time (NULL);
   struct tm *tm = localtime (&t);
-  char *host;
   char *p;
-	  
+  static size_t n=0;
+  n++;
   mu_strftime (date, sizeof date, "%Y%m%d%H%M%S", tm);
-  mu_get_host_name (&host);
-
-  if (subpart)
-    {
-      struct timeval tv;
-      gettimeofday (&tv, NULL);
-      mu_asprintf (&p, "<%s.%lu.%d@%s>",
-		   date,
-		   (unsigned long) getpid (),
-		   subpart,
-		   host);
-    }
-  else
-    mu_asprintf (&p, "<%s.%lu@%s>", date, (unsigned long) getpid (), host);
-  free (host);
+  mu_asprintf (&p, "<%s.%lu.%lu@%s>", date, (unsigned long) getpid (), n, fake_hostname());
   *pval = p;
   return 0;
 }

@@ -19,7 +19,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-
+#include <mailutils/property.h>
 static int isfilename (const char *);
 static int msg_to_pipe (const char *cmd, mu_message_t msg);
 
@@ -182,7 +182,7 @@ attach_set_content_type (struct atchinfo *aptr, char const *content_type)
       && !strstr (content_type, "charset=")
       && (charset = util_get_charset ()))
     {
-      mu_asprintf (&aptr->content_type, "%s; charset=%s",
+      mu_asprintf (&aptr->content_type, "%s; charset=\"%s\"",
 		   content_type, charset);
       free (charset);
     }
@@ -531,7 +531,7 @@ add_body (mu_message_t inmsg, compose_env_t *env)
   aptr = mu_alloc (sizeof (*aptr));
   aptr->id = NULL;
   aptr->encoding = default_encoding ? mu_strdup (default_encoding) : NULL;
-  attach_set_content_type (aptr, default_content_type);
+  attach_set_content_type (aptr, NULL);
   aptr->name = NULL;
   aptr->filename = NULL;
   aptr->source = str;
@@ -1116,6 +1116,7 @@ send_message (mu_message_t msg)
       else
 	{
 	  mu_mailer_t mailer;
+	  const char * sourceip_str;
 	  
 	  status = mu_mailer_create (&mailer, sendmail);
 	  if (status == 0)
@@ -1142,6 +1143,15 @@ send_message (mu_message_t msg)
 		  mu_debug_set_category_level (MU_DEBCAT_MAILER,
 					  MU_DEBUG_LEVEL_UPTO (MU_DEBUG_PROT));
 		}
+              if(0==mailvar_get(&sourceip_str,"sourceip",mailvar_type_string,0)&&7<=strlen(sourceip_str))
+               {mu_property_t p=NULL;
+                if(0!=(status=mu_mailer_get_property(mailer,&p)))
+                 return(status);
+                else
+                 {if(0!=(status=mu_property_set_value(p,"sourceip",sourceip_str,1)))
+                   return(status);
+                 }
+               }
 	      status = mu_mailer_open (mailer, MU_STREAM_RDWR);
 	      if (status == 0)
 		{

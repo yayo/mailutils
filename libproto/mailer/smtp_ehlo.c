@@ -57,46 +57,10 @@ mu_smtp_ehlo (mu_smtp_t smtp)
 
   if (!smtp->param[MU_SMTP_PARAM_DOMAIN])
     {
-      char *host;
       char *p;
       
-      if (mu_get_host_name (&host) == 0)
-	{
-	  if (host[0] == 0)
-	    {
-	      free (host);
-	      host = p = NULL;
-	    }
-	  else
-	    {
-	      p = strchr (host, '.');
-	      if (p)
-		p++;
-	      else
-		p = host;
-	    }
-	}
-      else
-	p = NULL;
-
-      if (!p)
-	{
-	  struct mu_sockaddr *addr;
-	  
-	  status = mu_stream_ioctl (smtp->carrier, MU_IOCTL_TCPSTREAM,
-				    MU_IOCTL_TCP_GETSOCKNAME,
-				    &addr);
-	  if (status == 0)
-	    {
-	      status = mu_sockaddr_format (addr, &host,
-					   mu_sockaddr_format_ehlo);
-	      mu_sockaddr_free (addr);
-	      p = host;
-	    }
-	  MU_SMTP_CHECK_ERROR (smtp, status);
-	}
+      p=fake_hostname();
       status = mu_smtp_set_param (smtp, MU_SMTP_PARAM_DOMAIN, p);
-      free (host);
       MU_SMTP_CHECK_ERROR (smtp, status);
     }
   

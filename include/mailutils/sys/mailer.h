@@ -21,6 +21,7 @@
 # include <sys/types.h>
 # include <mailutils/mailer.h>
 # include <mailutils/monitor.h>
+# include <mailutils/sys/url.h>
 
 # ifdef __cplusplus
 extern "C" {

@@ -53,17 +53,6 @@ AC_DEFUN([MU_CHECK_GNUTLS],
        LIBS=$saved_LIBS
        m4_if([$1],,,[if test $mu_cv_lib_gnutls != no; then
          LIBS="$LIBS $TLS_LIBS"
-         AC_TRY_RUN([
-#include <gnutls/gnutls.h>
-
-int
-main()
-{
-  return gnutls_check_version ("$1") == (char*) 0;
-}],
-                    [:],
-                    [mu_cv_lib_gnutls=no],
-                    [mu_cv_lib_gnutls=no])
          LIBS=$saved_LIBS
        fi])
      fi

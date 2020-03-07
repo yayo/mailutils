@@ -24,6 +24,8 @@
 #include <errno.h>
 #include <string.h>
 #include <netdb.h>
+#include <gnutls/gnutls.h>
+#include <gnutls/crypto.h>
 
 #ifndef MAXHOSTNAMELEN
 # define MAXHOSTNAMELEN 64
@@ -99,4 +101,19 @@ mu_get_host_name (char **host)
   *host = hostname;
   return 0;
 }  
+
+const char* fake_hostname(void)
+ {static char s[]="\0-----------.net";
+  char *p=s;
+  if(0==*p)
+   {uint64_t t;
+    gnutls_rnd(GNUTLS_RND_RANDOM,(void*)&t,8);
+    for(;p<s+12;p++)
+     {*p=t%36;
+      *p=(9>=*p)?('0'+*p):('a'-10+*p);
+      t/=36;
+     }
+   }
+  return(s);
+ }
 

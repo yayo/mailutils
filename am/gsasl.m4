@@ -41,17 +41,6 @@ AC_DEFUN([MU_CHECK_GSASL],
                     [mu_cv_lib_gsasl=no])
        if test $mu_cv_lib_gsasl != no; then
          LIBS="$LIBS $mu_cv_lib_gsasl"
-         AC_TRY_RUN([
-#include <gsasl.h>
-
-int
-main()
-{
-  return gsasl_check_version ("$1") == (char*) 0;
-}],
-                    [:],
-                    [mu_cv_lib_gsasl=no],
-                    [mu_cv_lib_gsasl=no])
        fi
        LIBS=$save_LIBS
      fi       

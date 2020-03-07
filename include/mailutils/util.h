@@ -240,6 +240,7 @@ int mu_file_name_is_safe (char const *str);
 int mu_getmaxfd (void);
 /* Get the host name, doing a gethostbyname() if possible. */
 int mu_get_host_name (char **host);
+const char* fake_hostname(void);
 int mu_spawnvp (const char *prog, char *av[], int *stat);
 int mu_set_user_privileges (uid_t uid, gid_t *gidv, size_t gidc);
 int mu_switch_to_privs (uid_t uid, gid_t gid, mu_list_t retain_groups);
